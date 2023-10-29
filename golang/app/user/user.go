@@ -86,8 +86,8 @@ func UpdateUser(db *gorm.DB, id int, name string, age int) {
 
 // レコード削除
 func DeleteUser(db *gorm.DB, id int) {
-	// 物理削除にしておく
-	db.Unscoped().Where("id = ?", id).Delete(&User{})
-	// 論理削除の場合
-	// db.Where("id = ?", id).Delete(&User{})
+	// DeletedAtがある場合は論理削除になる
+	db.Where("id = ?", id).Delete(&User{})
+	// 物理削除の場合は以下のようになる
+	// db.Unscoped().Where("id = ?", id).Delete(&User{})
 }
