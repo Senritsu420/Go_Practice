@@ -5,27 +5,40 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo"
 )
 
-func GetAllUser(c *gin.Context) {
+// レスポンスJsonの定義
+type RequestJson struct {
+	Id   int    `json:"int"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+type ResponseAll struct {
+	Status string      `json:"status"`
+	Data   []user.User `json:"data"`
+}
+
+type ResponseOne struct {
+	Status string    `json:"status"`
+	Data   user.User `json:"data"`
+}
+
+func GetAllUser(c echo.Context) error {
 	users := user.ReadAll(user.Db)
-	c.JSONP(http.StatusOK, gin.H{
-		"status": "OK",
-		"data":   users,
+	return c.JSON(http.StatusOK, ResponseAll{
+		Status: "OK",
+		Data:   users,
 	})
 }
 
-func GetOneUser(c *gin.Context) {
+func GetOneUser(c echo.Context) error {
 	param := c.Param("id")
 	id, _ := strconv.Atoi(param)
 	user := user.ReadOne(user.Db, id)
-	c.JSONP(http.StatusOK, gin.H{
-		"status": "OK",
-		"data":   user,
+	return c.JSON(http.StatusOK, ResponseOne{
+		Status: "OK",
+		Data:   user,
 	})
 }
-
-// func InsertUser(c *gin.Context) {
-// 	name := c.DefaultQuery()
-// }
