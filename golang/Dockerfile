@@ -1,19 +1,17 @@
+# goのバージョン指定
 FROM golang:1.19.2-alpine3.16
-
-ENV GOPATH /go
+# go moduleモード
 ENV GO111MODULE on
-RUN mkdir /go/src/app
-
+# 必要なものをインストール
 RUN apk update && \
     apk --no-cache add git && \
     apk add bash
-
-# RUN mkdir /go/src/app
+# 作業ディレクトリ変更
 WORKDIR /go/src/app
-
+# go.mod作成
 RUN go mod init app
-
+# go.mod更新＆Air（ホットリロードライブラリ）インストール
 RUN go mod tidy && \
     go install github.com/cosmtrek/air@v1.40.4
-
+# Air実行
 CMD ["air", "-c", ".air.toml"]
