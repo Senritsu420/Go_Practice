@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -21,19 +22,41 @@ type User struct {
 var Db *gorm.DB
 
 func init() {
-	Db = dbInit()
+	dbInit()
 	// Userテーブル作成
 	Db.AutoMigrate(&User{})
 }
 
-// DBを起動させる
-func dbInit() *gorm.DB {
-	dsn := fmt.Sprintf(`%s:%s@tcp(db:3306)/%s?charset=utf8mb4&parseTime=True`, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_DATABASE"))
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
+// DBに接続するまで再試行し、接続出来たらDBを返す
+func dbInit() {
+	user := os.Getenv("MYSQL_USER")
+	pw := os.Getenv("MYSQL_PASSWORD")
+	db_name := os.Getenv("MYSQL_DATABASE")
+	dsn := fmt.Sprintf(`%s:%s@tcp(db:3306)/%s?charset=utf8mb4&parseTime=True`, user, pw, db_name)
+	dialector := mysql.Open(dsn)
+	var err error
+	// DBコンテナが立ち上がるまで再試行
+	// GoがDBコンテナが立ち上がる前に接続しに行くとエラーになるため
+	if Db, err = gorm.Open(dialector, &gorm.Config{}); err != nil {
+		connectDB(dialector, 100)
 	}
-	return db
+	fmt.Println("db connected!!")
+}
+
+// DBに接続を行う
+func connectDB(dialector gorm.Dialector, count uint) {
+	var err error
+	Db, err = gorm.Open(dialector, &gorm.Config{})
+	if err != nil {
+		if count > 1 {
+			time.Sleep(time.Second * 2)
+			count--
+			fmt.Printf("retry... count:%v\n", count)
+			connectDB(dialector, count)
+			return
+		}
+		panic(err.Error())
+	}
 }
 
 // レコード全件取得
