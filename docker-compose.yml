@@ -1,7 +1,28 @@
 version: "3.8"
 services:
-    go:
-        container_name: go
+    frontend:
+        container_name: frontend
+        build: ./nextjs
+        tty: true
+        ports:
+            - "3000:3000"
+        depends_on:
+            - backend
+        volumes:
+            - type: bind
+              source: ./nextjs/app
+              target: /src/app
+            - type: volume
+              # 名前付きボリュームにすることでホストマシンと同期させない
+              source: node_modules
+              target: /src/app/node_modules
+        command: "npm run dev"
+        networks:
+            - frontend_network
+        environment:
+            - WATCHPACK_POLLING=true
+    backend:
+        container_name: backend
         build: ./golang
         tty: true
         ports:
@@ -11,9 +32,12 @@ services:
         depends_on:
             - db
         volumes:
-            - ./golang/app:/go/src/app
+            - type: bind
+              source: ./golang/app
+              target: /go/src/app
         networks:
-            - golang_test_network
+            - frontend_network
+            - backend_network
 
     db:
         container_name: db
@@ -27,12 +51,14 @@ services:
         volumes:
             - mysql_test_volume:/var/lib/mysql
         networks:
-            - golang_test_network
+            - backend_network
 
 volumes:
     mysql_test_volume:
-        name: mysql_test_volume
+    node_modules:
 
 networks:
-    golang_test_network:
+    frontend_network:
+        external: true
+    backend_network:
         external: true
