@@ -1,5 +1,7 @@
-import './globals.css'
 import { Inter } from 'next/font/google'
+import { Providers } from './provider'
+import { Container } from '@chakra-ui/react'
+import { Header } from './components/organisms/Header'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -14,8 +16,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="ja">
+      <body className={inter.className}>
+        <Providers>
+          <Header />
+          <Container size="md" my="5%">
+            {children}
+          </Container>
+        </Providers>
+      </body>
     </html>
   )
 }

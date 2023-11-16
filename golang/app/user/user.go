@@ -13,10 +13,10 @@ import (
 
 type User struct {
 	// gorm.Modelをつけると、idとCreatedAtとUpdatedAtとDeletedAtが作られる
-	gorm.Model
+	gorm.Model `json:"-"`
 
-	Name string
-	Age  int
+	Name string `json:"name"`
+	Age  int    `json:"age"`
 }
 
 var Db *gorm.DB
