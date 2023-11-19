@@ -1,7 +1,7 @@
 import { LinkBox } from "@chakra-ui/react"
 import Link from "next/link"
 
-type HeaderLinkProps = {
+interface HeaderLinkProps {
     href: string
     title: string
 }
