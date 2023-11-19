@@ -1,5 +1,3 @@
-// 'use client'
-
 import { Flex, Heading } from '@chakra-ui/react'
 import { UserTable } from './components/organisms/UserTable'
 
