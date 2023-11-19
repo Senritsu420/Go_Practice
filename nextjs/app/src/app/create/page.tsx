@@ -7,14 +7,18 @@ import { userUrl, postUser } from "../api/user/route";
 
 interface InputProps {
     name: string
-    age: number
+    age: string // ChakraUIのNumberInputは値がstringになるため
 }
 
 const Create: NextPage = () => {
     const { register, handleSubmit } = useForm<InputProps>()
 
     const onSubmit: SubmitHandler<InputProps> = async(data: InputProps) => {
-        const res = await postUser(userUrl, data)
+        const formattedData = {
+            name: data.name,
+            age: parseInt(data.age, 10)
+        }
+        const res = await postUser(userUrl, formattedData)
         console.log(res)
     }
 
@@ -28,8 +32,8 @@ const Create: NextPage = () => {
                         <Input type="text" placeholder="ユーザー太郎" {...register("name", { required: "名前を入力してください"})} />
 
                         <FormLabel>Age</FormLabel>
-                        <NumberInput max={100} min={0}>
-                            <NumberInputField {...register("age", { required: "年齢を入力してください"})} />
+                        <NumberInput max={100} min={0} defaultValue={0}>
+                            <NumberInputField {...register("age", { required: "年齢を入力してください", valueAsNumber: true})} />
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
                                 <NumberDecrementStepper />

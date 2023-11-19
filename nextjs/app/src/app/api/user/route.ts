@@ -5,11 +5,13 @@ interface UserProps {
   age: number
 }
 
+
 export async function getAllUser(url: string) {
   const res = await fetch(url, {
+    cache: "no-store",
     method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     }
   })
   if (!res.ok) {
@@ -22,7 +24,7 @@ export async function postUser(url: string, data: UserProps) {
   const res = await fetch(url, {
     method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
       "name": data.name,
