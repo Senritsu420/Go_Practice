@@ -36,8 +36,25 @@ export async function postUser(url: string, data: UserProps) {
   return res.json()
 }
 
-export const getOneUser = async (id: string) => {
-  const res = await fetch(`${userUrl}/${id}`)
+export const getOneUser = async (id: string, url: string) => {
+  const res = await fetch(`${url}/${id}`)
   const resJson = await res.json()
   return resJson
+}
+
+export async function putUser(id: string, url: string, data: UserProps) {
+  const res = await fetch(`${url}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      "name": data.name,
+      "age": data.age,
+    })
+  })
+  if (!res.ok) {
+    throw new Error(res.statusText)
+  }
+  return res.json()
 }
