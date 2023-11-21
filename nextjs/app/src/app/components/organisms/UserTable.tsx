@@ -1,6 +1,6 @@
 'use client'
 
-import { getAllUser, userUrl } from '@/app/api/user/route'
+import { deleteUser, getAllUser, userUrl } from '@/app/api/user/route'
 import { Text } from '@chakra-ui/react'
 import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table'
 import useSWR from 'swr'
@@ -30,6 +30,13 @@ export const UserTable = () => {
             },
         }))
         router.push(`update/${data.id}`)
+    }
+
+    const DeleteOnSubmit = async (id: number) => {
+        const idStr = String(id)
+        const res = await deleteUser(idStr, userUrl)
+        console.log(res)
+        router.push('/')
     }
 
     return (
@@ -62,9 +69,13 @@ export const UserTable = () => {
                                             onClick={() => PutOnSubmit(record)}
                                         />
                                     </Td>
-                                    {/* <Td>
-                        <TableButton title='削除' color='red' onClick={} />
-                    </Td> */}
+                                    <Td>
+                                        <TableButton
+                                            title='削除'
+                                            color='red'
+                                            onClick={() => DeleteOnSubmit(record.id)}
+                                        />
+                                    </Td>
                                 </Tr>
                             ))}
                         </Tbody>
