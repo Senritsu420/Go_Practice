@@ -3,22 +3,18 @@
 import { NextPage } from 'next'
 import { useRecoilValue } from 'recoil'
 import { UserState } from '@/app/components/atoms/UserState'
-
-interface UserProps {
-    name: string
-    age: string // ChakraUIのNumberInputは値がstringになるため
-}
+import { Flex, Heading } from '@chakra-ui/react'
+import { UserUpdateForm } from '@/app/components/organisms/UserUpdateForm'
 
 const Update: NextPage = () => {
     const user = useRecoilValue(UserState)
     console.log(user)
 
     return (
-        <>
-            <p>{user.id}</p>
-            <p>{user.name}</p>
-            <p>{user.age}</p>
-        </>
+        <Flex direction='column' gap='20px'>
+            <Heading size='lg'>ユーザ情報更新</Heading>
+            <UserUpdateForm id={user.id} name={user.name} age={user.age} />
+        </Flex>
     )
 }
 

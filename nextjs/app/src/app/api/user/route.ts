@@ -36,13 +36,13 @@ export async function postUser(url: string, data: UserProps) {
     return res.json()
 }
 
-export const getOneUser = async (id: string, url: string) => {
+export const getOneUser = async (id: number, url: string) => {
     const res = await fetch(`${url}/${id}`)
     const resJson = await res.json()
     return resJson
 }
 
-export async function putUser(id: string, url: string, data: UserProps) {
+export async function putUser(id: number, url: string, data: UserProps) {
     const res = await fetch(`${url}/${id}`, {
         method: 'PUT',
         headers: {
@@ -59,7 +59,7 @@ export async function putUser(id: string, url: string, data: UserProps) {
     return res.json()
 }
 
-export async function deleteUser(id: string, url: string) {
+export async function deleteUser(id: number, url: string) {
     const res = await fetch(`${url}/${id}`, {
         method: 'DELETE',
         headers: {

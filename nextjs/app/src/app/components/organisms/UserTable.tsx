@@ -33,8 +33,7 @@ export const UserTable = () => {
     }
 
     const DeleteOnSubmit = async (id: number) => {
-        const idStr = String(id)
-        const res = await deleteUser(idStr, userUrl)
+        const res = await deleteUser(id, userUrl)
         console.log(res)
         router.push('/')
     }
