@@ -16,7 +16,7 @@ interface ResponseProps {
 }
 
 export const UserTable = () => {
-    const { data, error } = useSWR(userUrl, getAllUser)
+    const { data, error, mutate } = useSWR(userUrl, getAllUser)
     const [user, setUser] = useRecoilState(UserState)
     const router = useRouter()
 
@@ -35,7 +35,7 @@ export const UserTable = () => {
     const DeleteOnSubmit = async (id: number) => {
         const res = await deleteUser(id, userUrl)
         console.log(res)
-        router.push('/')
+        mutate(data) // キャッシュにデータ変更を反映
     }
 
     return (

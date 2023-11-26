@@ -1,9 +1,10 @@
 'use client'
 
-import { putUser, userUrl } from '@/app/api/user/route'
 import { Button, Flex, FormControl, FormLabel } from '@chakra-ui/react'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import { useState } from 'react'
 import { FormInput } from '../atoms/FormInput'
+import { putUser, userUrl } from '@/app/api/user/route'
 import { FormNumberInput } from '../atoms/FormNumberInput'
 
 interface UserProps {
@@ -20,6 +21,11 @@ interface UserUpdateFormProps {
 export const UserUpdateForm = (props: UserUpdateFormProps) => {
     const { id, name, age } = props
     const { register, handleSubmit } = useForm<UserProps>()
+    const [value, setValue] = useState(name)
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(event.target.value)
+    }
 
     const onSubmit: SubmitHandler<UserProps> = async (data: UserProps) => {
         const formattedData = {
@@ -36,7 +42,10 @@ export const UserUpdateForm = (props: UserUpdateFormProps) => {
                 <FormControl isRequired>
                     <FormLabel>Name</FormLabel>
                     <FormInput
-                        value={name}
+                        value={value}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setValue(e.target.value)
+                        }
                         placeholder='ユーザー太郎'
                         register={register('name', { required: '名前を入力してください' })}
                     />
