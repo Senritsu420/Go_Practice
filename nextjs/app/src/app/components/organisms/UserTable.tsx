@@ -46,7 +46,7 @@ export const UserTable = () => {
             ) : (
                 <TableContainer>
                     <Table variant='simple'>
-                        <TableCaption>Imperial to metric conversion factors</TableCaption>
+                        <TableCaption>Practice Next.js</TableCaption>
                         <Thead>
                             <Tr>
                                 <Th isNumeric>Id</Th>
