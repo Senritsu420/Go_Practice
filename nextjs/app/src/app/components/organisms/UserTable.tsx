@@ -4,10 +4,10 @@ import { deleteUser, getAllUser, userUrl } from '@/app/api/user/route'
 import { Text } from '@chakra-ui/react'
 import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table'
 import useSWR from 'swr'
-import { TableButton } from '../atoms/TableButton'
 import { useRecoilState } from 'recoil'
 import { UserState } from '../atoms/UserState'
 import { useRouter } from 'next/navigation'
+import { EditIcon, DeleteIcon } from '@chakra-ui/icons'
 
 interface ResponseProps {
     id: number
@@ -62,17 +62,17 @@ export const UserTable = () => {
                                     <Td>{record.name}</Td>
                                     <Td isNumeric>{record.age}</Td>
                                     <Td>
-                                        <TableButton
-                                            title='更新'
-                                            color='teal'
+                                        <EditIcon
                                             onClick={() => PutOnSubmit(record)}
+                                            color='green.600'
+                                            _hover={{ cursor: 'pointer', opacity: '0.5' }}
                                         />
                                     </Td>
                                     <Td>
-                                        <TableButton
-                                            title='削除'
-                                            color='red'
+                                        <DeleteIcon
                                             onClick={() => DeleteOnSubmit(record.id)}
+                                            color='red.600'
+                                            _hover={{ cursor: 'pointer', opacity: '0.5' }}
                                         />
                                     </Td>
                                 </Tr>

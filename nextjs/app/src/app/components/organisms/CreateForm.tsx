@@ -29,7 +29,7 @@ export const CreateForm = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl isRequired>
-                <Flex direction='column' gap='5px'>
+                <Flex gap='5px' alignItems='flex-end'>
                     <Flex direction='column'>
                         <FormLabel>Name</FormLabel>
                         <FormInput
@@ -49,8 +49,8 @@ export const CreateForm = () => {
                             })}
                         />
                     </Flex>
-                    <Button type='submit' mt={4}>
-                        新規作成
+                    <Button type='submit' variant='outline'>
+                        追加
                     </Button>
                 </Flex>
             </FormControl>

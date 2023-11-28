@@ -6,9 +6,9 @@ export default function Home() {
     return (
         <div>
             <Flex direction='column' gap='20px'>
+                <CreateForm />
                 <Heading size='lg'>ユーザ一覧</Heading>
                 <UserTable />
-                <CreateForm />
             </Flex>
         </div>
     )
