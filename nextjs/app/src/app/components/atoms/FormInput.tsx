@@ -1,15 +1,13 @@
-import { Input } from "@chakra-ui/react"
+import { Input } from '@chakra-ui/react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
 interface FormInputProps {
     register?: UseFormRegisterReturn
-    value?: string
     placeholder?: string
+    defaultValue?: string
 }
 
 export const FormInput = (props: FormInputProps) => {
-    const { register, value, placeholder } = props
-    return (
-        <Input {...register} type="text" value={value} placeholder={placeholder} />
-    )
+    const { register, placeholder, defaultValue } = props
+    return <Input {...register} type='text' placeholder={placeholder} defaultValue={defaultValue} />
 }

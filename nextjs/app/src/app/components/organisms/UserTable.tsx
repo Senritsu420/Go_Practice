@@ -4,10 +4,10 @@ import { deleteUser, getAllUser, userUrl } from '@/app/api/user/route'
 import { Text } from '@chakra-ui/react'
 import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table'
 import useSWR from 'swr'
-import { TableButton } from '../atoms/TableButton'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { UserState } from '../atoms/UserState'
-import { useRouter } from 'next/navigation'
+import { EditIcon, DeleteIcon, CloseIcon } from '@chakra-ui/icons'
+import { IsUpdateState } from '../atoms/IsUpdate'
 
 interface ResponseProps {
     id: number
@@ -16,26 +16,40 @@ interface ResponseProps {
 }
 
 export const UserTable = () => {
-    const { data, error } = useSWR(userUrl, getAllUser)
-    const [user, setUser] = useRecoilState(UserState)
-    const router = useRouter()
+    const { data, error, mutate } = useSWR(userUrl, getAllUser)
+    const setUser = useSetRecoilState(UserState)
+    const [isUpdate, setIsUpdate] = useRecoilState(IsUpdateState)
 
-    const PutOnSubmit = (data: ResponseProps) => {
-        setUser((currentUser) => ({
-            ...currentUser,
+    // 編集ボタン押下時の挙動
+    const PutButtonHandle = (data: ResponseProps) => {
+        setUser(() => ({
             ...{
                 id: data.id,
                 name: data.name,
                 age: data.age,
             },
         }))
-        router.push(`update/${data.id}`)
+        setIsUpdate(true)
+        console.log(isUpdate)
+    }
+
+    // キャンセルボタン押下時の挙動
+    const CancelButtonHandle = () => {
+        setUser(() => ({
+            ...{
+                id: 0,
+                name: '',
+                age: 0,
+            },
+        }))
+        setIsUpdate(false)
+        console.log(isUpdate)
     }
 
     const DeleteOnSubmit = async (id: number) => {
         const res = await deleteUser(id, userUrl)
         console.log(res)
-        router.push('/')
+        mutate(data) // キャッシュにデータ変更を反映
     }
 
     return (
@@ -46,7 +60,7 @@ export const UserTable = () => {
             ) : (
                 <TableContainer>
                     <Table variant='simple'>
-                        <TableCaption>Imperial to metric conversion factors</TableCaption>
+                        <TableCaption>Practice Next.js</TableCaption>
                         <Thead>
                             <Tr>
                                 <Th isNumeric>Id</Th>
@@ -62,17 +76,25 @@ export const UserTable = () => {
                                     <Td>{record.name}</Td>
                                     <Td isNumeric>{record.age}</Td>
                                     <Td>
-                                        <TableButton
-                                            title='更新'
-                                            color='teal'
-                                            onClick={() => PutOnSubmit(record)}
-                                        />
+                                        {isUpdate ? (
+                                            <CloseIcon
+                                                onClick={() => CancelButtonHandle()}
+                                                color='green.600'
+                                                _hover={{ cursor: 'pointer', opacity: '0.5' }}
+                                            />
+                                        ) : (
+                                            <EditIcon
+                                                onClick={() => PutButtonHandle(record)}
+                                                color='green.600'
+                                                _hover={{ cursor: 'pointer', opacity: '0.5' }}
+                                            />
+                                        )}
                                     </Td>
                                     <Td>
-                                        <TableButton
-                                            title='削除'
-                                            color='red'
+                                        <DeleteIcon
                                             onClick={() => DeleteOnSubmit(record.id)}
+                                            color='red.600'
+                                            _hover={{ cursor: 'pointer', opacity: '0.5' }}
                                         />
                                     </Td>
                                 </Tr>

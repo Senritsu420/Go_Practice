@@ -16,9 +16,9 @@ func main() {
 	// パニックを回復し、スタックトレースを表示
 	e.Use(middleware.Recover())
 
-	/* CORS(オリジン間リソース共有)の設定 */
+	// CORS(オリジン間リソース共有)の設定
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		/* http://localhost:3000からの接続を許可する */
+		// http://localhost:3000からの接続を許可する
 		AllowOrigins: []string{"http://localhost:3000"},
 		AllowMethods: []string{
 			http.MethodGet,
