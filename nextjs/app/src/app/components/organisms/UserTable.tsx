@@ -4,7 +4,7 @@ import { deleteUser, getAllUser, userUrl } from '@/app/api/user/route'
 import { Text } from '@chakra-ui/react'
 import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table'
 import useSWR from 'swr'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil'
 import { UserState } from '../atoms/UserState'
 import { EditIcon, DeleteIcon, CloseIcon } from '@chakra-ui/icons'
 import { IsUpdateState } from '../atoms/IsUpdate'
@@ -17,7 +17,9 @@ interface ResponseProps {
 
 export const UserTable = () => {
     const { data, error, mutate } = useSWR(userUrl, getAllUser)
-    const setUser = useSetRecoilState(UserState)
+    // const setUser = useSetRecoilState(UserState)
+    const [user, setUser] = useRecoilState(UserState)
+    const resetUser = useResetRecoilState(UserState)
     const [isUpdate, setIsUpdate] = useRecoilState(IsUpdateState)
 
     // 編集ボタン押下時の挙動
@@ -35,15 +37,8 @@ export const UserTable = () => {
 
     // キャンセルボタン押下時の挙動
     const CancelButtonHandle = () => {
-        setUser(() => ({
-            ...{
-                id: 0,
-                name: '',
-                age: 0,
-            },
-        }))
+        resetUser()
         setIsUpdate(false)
-        console.log(isUpdate)
     }
 
     const DeleteOnSubmit = async (id: number) => {
