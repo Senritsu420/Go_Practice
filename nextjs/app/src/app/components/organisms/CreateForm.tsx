@@ -6,9 +6,10 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import useSWR from 'swr'
 import { FormInput } from '../atoms/FormInput'
 import { FormNumberInput } from '../atoms/FormNumberInput'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
 import { UserState } from '../atoms/UserState'
 import { IsUpdateState } from '../atoms/IsUpdate'
+import { ChangeEvent } from 'react'
 
 interface UserProps {
     name: string
@@ -18,6 +19,7 @@ interface UserProps {
 export const CreateForm = () => {
     const [user, setUser] = useRecoilState(UserState)
     const [isUpdate, setIsUpdate] = useRecoilState(IsUpdateState)
+    const resetUser = useResetRecoilState(UserState)
     const { register, handleSubmit } = useForm<UserProps>()
     const { data, mutate } = useSWR(userUrl, getAllUser)
 
@@ -29,13 +31,7 @@ export const CreateForm = () => {
         const res = await postUser(userUrl, formattedData)
         console.log(res)
         mutate(data)
-        setUser(() => ({
-            ...{
-                id: 0,
-                name: '',
-                age: 0,
-            },
-        }))
+        resetUser()
     }
 
     const UpdateOnSubmit: SubmitHandler<UserProps> = async (query: UserProps) => {
@@ -46,13 +42,7 @@ export const CreateForm = () => {
         const res = await putUser(user.id, userUrl, formattedData)
         console.log(res)
         mutate(data)
-        setUser(() => ({
-            ...{
-                id: 0,
-                name: '',
-                age: 0,
-            },
-        }))
+        resetUser()
         setIsUpdate(false)
     }
 
@@ -69,7 +59,16 @@ export const CreateForm = () => {
                                     register={register('name', {
                                         required: '名前を入力してください',
                                     })}
-                                    defaultValue={user.name}
+                                    value={user.name}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                        setUser(() => ({
+                                            ...{
+                                                id: user.id,
+                                                name: e.target.value,
+                                                age: user.age,
+                                            },
+                                        }))
+                                    }
                                 />
                             </Flex>
                             <Flex direction='column'>
@@ -77,11 +76,20 @@ export const CreateForm = () => {
                                 <FormNumberInput
                                     max={100}
                                     min={0}
-                                    defaultValue={user.age}
                                     register={register('age', {
                                         required: '年齢を入力してください',
                                         valueAsNumber: true,
                                     })}
+                                    value={user.age}
+                                    onChange={(valueAsNumber) =>
+                                        setUser(() => ({
+                                            ...{
+                                                id: user.id,
+                                                name: user.name,
+                                                age: Number(valueAsNumber),
+                                            },
+                                        }))
+                                    }
                                 />
                             </Flex>
                             <Button type='submit' variant='outline'>
@@ -101,7 +109,16 @@ export const CreateForm = () => {
                                     register={register('name', {
                                         required: '名前を入力してください',
                                     })}
-                                    defaultValue={user.name}
+                                    value={user.name}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                        setUser(() => ({
+                                            ...{
+                                                id: user.id,
+                                                name: e.target.value,
+                                                age: user.age,
+                                            },
+                                        }))
+                                    }
                                 />
                             </Flex>
                             <Flex direction='column'>
@@ -109,11 +126,20 @@ export const CreateForm = () => {
                                 <FormNumberInput
                                     max={100}
                                     min={0}
-                                    defaultValue={user.age}
                                     register={register('age', {
                                         required: '年齢を入力してください',
                                         valueAsNumber: true,
                                     })}
+                                    value={user.age}
+                                    onChange={(valueAsNumber) =>
+                                        setUser(() => ({
+                                            ...{
+                                                id: user.id,
+                                                name: user.name,
+                                                age: Number(valueAsNumber),
+                                            },
+                                        }))
+                                    }
                                 />
                             </Flex>
                             <Button type='submit' variant='outline'>

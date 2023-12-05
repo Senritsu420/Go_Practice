@@ -1,17 +1,24 @@
-import { NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper } from '@chakra-ui/react'
+import {
+    NumberDecrementStepper,
+    NumberIncrementStepper,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+} from '@chakra-ui/react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
 interface FormNumberInputProps {
     max: number
     min: number
-    defaultValue?: number
-    register?: UseFormRegisterReturn
+    register: UseFormRegisterReturn
+    value: number
+    onChange: (valueAsString: string, valueAsNumber: number) => void
 }
 
 export const FormNumberInput = (props: FormNumberInputProps) => {
-    const { max, min, defaultValue, register } = props
+    const { max, min, register, value, onChange } = props
     return (
-        <NumberInput max={max} min={min} defaultValue={defaultValue}>
+        <NumberInput max={max} min={min} value={value} onChange={onChange}>
             <NumberInputField {...register} />
             <NumberInputStepper>
                 <NumberIncrementStepper />
