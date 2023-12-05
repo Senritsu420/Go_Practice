@@ -11,7 +11,10 @@ import (
 // 全てのuser情報を取得し、JSON形式で返す
 func GetAllUser(c echo.Context) error {
 	// 全てのuser情報を取得
-	users := user.ReadAll(user.Db)
+	users, err := user.ReadAll(user.Db)
+	if err != nil {
+		return err
+	}
 	// 全てのuser情報をJSON形式で返す
 	return c.JSON(http.StatusOK, users)
 }
@@ -23,7 +26,10 @@ func GetOneUser(c echo.Context) error {
 	// idを整数型に変換
 	id, _ := strconv.Atoi(param)
 	// 特定のuser情報を取得
-	user := user.ReadOne(user.Db, id)
+	user, err := user.ReadOne(user.Db, id)
+	if err != nil {
+		return err
+	}
 	// 特定のuser情報をJSON形式で返す
 	return c.JSON(http.StatusOK, user)
 }
@@ -71,7 +77,10 @@ func DeleteUser(c echo.Context) error {
 	// idを整数型に変換
 	id, _ := strconv.Atoi(param)
 	// 構造体の情報を元にuserを更新
-	user := user.DeleteUser(user.Db, id)
+	user, err := user.DeleteUser(user.Db, id)
+	if err != nil {
+		return err
+	}
 	// 更新したuser情報をJSON形式で返す
 	return c.JSON(http.StatusOK, user)
 }

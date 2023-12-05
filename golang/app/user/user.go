@@ -3,7 +3,6 @@ package user
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -61,31 +60,31 @@ func connectDB(dialector gorm.Dialector, count uint) {
 }
 
 // レコード全件取得
-func ReadAll(db *gorm.DB) []User {
+func ReadAll(db *gorm.DB) ([]User, error) {
 	// user構造体のスライスを作成
 	users := []User{}
 	// 全てのuser情報を取得
 	result := db.Find(&users)
 	// エラー発生時はエラー内容を表示
 	if result.Error != nil {
-		log.Fatal(result.Error)
+		return users, result.Error
 	}
 	// 全てのuser情報を返す
-	return users
+	return users, result.Error
 }
 
 // レコード単体取得
-func ReadOne(db *gorm.DB, id int) User {
+func ReadOne(db *gorm.DB, id int) (User, error) {
 	// user構造体を作成
 	user := User{}
 	// 特定のidのuser情報を取得
 	result := db.First(&user, id)
 	// idが見つからない場合はエラー内容を表示
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		log.Fatal(result.Error)
+		return user, result.Error
 	}
 	// 特定のuser情報を返す
-	return user
+	return user, result.Error
 }
 
 // レコード作成
@@ -99,7 +98,7 @@ func InsertUser(db *gorm.DB, name string, age int) error {
 	result := db.Create(&user)
 	// エラー発生時はエラー内容を表示
 	if result.Error != nil {
-		log.Fatal(result.Error)
+		return result.Error
 	}
 
 	return nil
@@ -108,28 +107,34 @@ func InsertUser(db *gorm.DB, name string, age int) error {
 // レコード更新
 func UpdateUser(db *gorm.DB, id int, name string, age int) error {
 	// 更新するユーザを取得する
-	user := ReadOne(db, id)
+	user, err := ReadOne(db, id)
+	if err != nil {
+		return err
+	}
 	// 構造体にidがある場合はupdateされる
 	user.Name = name
 	user.Age = age
 	result := db.Save(&user)
 	// エラー発生時はエラー内容を表示
 	if result.Error != nil {
-		log.Fatal(result.Error)
+		return result.Error
 	}
 
 	return nil
 }
 
 // レコード削除
-func DeleteUser(db *gorm.DB, id int) User {
+func DeleteUser(db *gorm.DB, id int) (User, error) {
 	// 削除するuser情報を取得
-	user := ReadOne(db, id)
+	user, err := ReadOne(db, id)
+	if err != nil {
+		return user, err
+	}
 	// DeletedAtがある場合は論理削除になる
 	db.Where("id = ?", id).Delete(&User{})
 	// 物理削除の場合は以下のようになる
 	// db.Unscoped().Where("id = ?", id).Delete(&User{})
 
 	// 削除したuser情報を返す
-	return user
+	return user, err
 }
